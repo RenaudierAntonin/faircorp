@@ -30,7 +30,7 @@ public class RoomControler {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "/{id}/{room}")
     public RoomDto findById(@PathVariable Long id) {
         return roomDao.findById(id).map(room -> new RoomDto(room)).orElse(null);
     }

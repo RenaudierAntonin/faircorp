@@ -1,10 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Hello World</title>
+    <title>Spring in practice</title>
 </head>
 <body>
-    Hello World !
+    <h1> Application de gestion des lampes </h1>
+    <ul>
+        <li>Voir un bâtiment</li>
+        <li>Voir une pièce</li>
+        <li>Voir une lampe</li>
+    </ul>
+    <ul>
+        <li> <a href="http://localhost:8080/api/buildings"> Voir tous les bâtiments </a></li>
+        <li> <a href="http://localhost:8080/api/rooms">  Voir toutes les pièces </a> </li>
+        <li> <a href="http://localhost:8080/api/lights"> Voir toutes les lampes </a> </li>
+    </ul>
+
+    <p> Building name </p>
+    <div id="building"> Pas de bâtiment sélectionné </div>
+    <input type="button" value="building" onclick="createBuildingButton()"/>
+
+    <p> Room name </p>
+    <div id="room"> Pas de salle sélectionné </div>
+    <input type="button" value="room" onclick="setRoom()"/>
+
+    <p> Light Id </p>
+    <div id="light"> Pas de lumière sélectionné </div>
+    <input type="button" value="light" onclick="setLight()"/>
+
+    <script>
+
+        function setBuilding() {
+            let buildingName = prompt("Entrez un nom de bâtiment:");
+            document.getElementById("building").innerHTML = buildingName;
+        }
+
+        function setRoom() {
+            let roomName = prompt("Entrez un nom de salle:");
+            document.getElementById("room").innerHTML = roomName;
+        }
+
+        function setLight() {
+            let lightID = prompt("Entrez un numéro de lumière:");
+            document.getElementById("light").innerHTML = lightID;
+        }
+
+        function createBuildingButton() {
+            let newButton = document.createElement("input");
+            newButton.type="button";
+            newButton.value= prompt("Entrez un nom de bâtiment:");
+            newButton.setAttribute("onclick","setBuilding()");
+            document.getElementById("building").innerHTML = "";
+            document.getElementById("building").appendChild(newButton);
+        }
+        
+    </script>
+
 </body>
 </html>

@@ -22,7 +22,7 @@ public class RoomControler {
     private RoomDaoImpl roomDaoImpl;
     private LightDaoImpl lightDaoImpl;
 
-    @GetMapping(path = "/{id}")
+    @GetMapping
     public List<RoomDto> findAll() {
         return roomDao.findAll()
                 .stream()

@@ -49,7 +49,7 @@ public class BuildingControler {
         }
 
         if (building == null) {
-            building = buildingDao.save(new Building(dto.getName()));
+            building = buildingDao.save(new Building(dto.getName(),dto.getRooms()));
         }
         else {
             building.setName(dto.getName());

@@ -12,49 +12,201 @@
         <li>Voir une lampe</li>
     </ul>
     <ul>
-        <li> <a href="http://localhost:8080/api/buildings"> Voir tous les bâtiments </a></li>
-        <li> <a href="http://localhost:8080/api/rooms">  Voir toutes les pièces </a> </li>
-        <li> <a href="http://localhost:8080/api/lights"> Voir toutes les lampes </a> </li>
+        <li> <a href="api/buildings"> Voir tous les bâtiments </a></li>
+        <li> <a href="/api/rooms">  Voir toutes les pièces </a> </li>
+        <li> <a href="/api/lights"> Voir toutes les lampes </a> </li>
     </ul>
 
     <p> Building name </p>
-    <div id="building"> Pas de bâtiment sélectionné </div>
-    <input type="button" value="building" onclick="createBuildingButton()"/>
+    <div id="building"> </div>
+
+    <div id="buildingDescription"> </div>
+    <div id="buildingId"> </div>
+    <div id="buildingName"> </div>
 
     <p> Room name </p>
-    <div id="room"> Pas de salle sélectionné </div>
-    <input type="button" value="room" onclick="setRoom()"/>
+    <div id="room"> </div>
+
+    <div id="roomDescription"> </div>
+    <div id="roomId"> </div>
+    <div id="roomFloor"> </div>
+    <div id="roomName"> </div>
+    <div id="roomStatus"> </div>
+    <div id="roomBuildingId"> </div>
 
     <p> Light Id </p>
-    <div id="light"> Pas de lumière sélectionné </div>
-    <input type="button" value="light" onclick="setLight()"/>
+    <div id="light"> </div>
+    <div id="lightDescription"> </div>
+    <div id="lightId"> </div>
+    <div id="lightLevel"> </div>
+    <div id="lightStatus"> </div>
+    <div id="lightRoomId"> </div>
+    <div id="lighton"> </div>
+
 
     <script>
 
-        function setBuilding() {
-            let buildingName = prompt("Entrez un nom de bâtiment:");
-            document.getElementById("building").innerHTML = buildingName;
-        }
+        let requestURLBuilding = 'http://localhost:8080/api/buildings';
+        let requestURLRoom = 'http://localhost:8080/api/rooms';
+        let requestURLLight = 'http://localhost:8080/api/lights'
 
-        function setRoom() {
-            let roomName = prompt("Entrez un nom de salle:");
-            document.getElementById("room").innerHTML = roomName;
-        }
-
-        function setLight() {
-            let lightID = prompt("Entrez un numéro de lumière:");
-            document.getElementById("light").innerHTML = lightID;
-        }
-
-        function createBuildingButton() {
+        function createBuildingButton(id, name) {
             let newButton = document.createElement("input");
             newButton.type="button";
-            newButton.value= prompt("Entrez un nom de bâtiment:");
-            newButton.setAttribute("onclick","setBuilding()");
-            document.getElementById("building").innerHTML = "";
+            newButton.value=name;
+            newButton.addEventListener("click",function() {
+                resetRoom();
+                document.getElementById("buildingDescription").innerHTML = "Building Description";
+                document.getElementById("buildingId").innerHTML = "ID: " + id ;
+                document.getElementById("buildingName").innerHTML = "Name: " + String(name);
+                getRoomFromBuilding(requestURLRoom,id);
+
+            });
             document.getElementById("building").appendChild(newButton);
         }
-        
+
+        function resetRoom() {
+            document.getElementById("room").innerHTML = "";
+            document.getElementById("roomDescription").innerHTML = "";
+            document.getElementById("roomId").innerHTML = "";
+            document.getElementById("roomFloor").innerHTML = "";
+            document.getElementById("roomName").innerHTML = "";
+            document.getElementById("roomStatus").innerHTML = "";
+            document.getElementById("roomBuildingId").innerHTML = "";
+            resetLight();
+        }
+
+        function createRoomButton(id, floor, name, status, buildingid) {
+            let newButton = document.createElement("input");
+            newButton.type="button";
+            newButton.value=name;
+            newButton.addEventListener("click",function() {
+                resetLight();
+                document.getElementById("roomDescription").innerHTML = "Room Description";
+                document.getElementById("roomId").innerHTML = "ID: " + id;
+                document.getElementById("roomFloor").innerHTML = "Floor: " + floor;
+                document.getElementById("roomName").innerHTML = "Name: " + name;
+                document.getElementById("roomStatus").innerHTML = "Status: " + String(status);
+                document.getElementById("roomBuildingId").innerHTML = "Building ID: " + buildingid;
+                getLightByRoom(requestURLLight, id);
+            });
+            document.getElementById("room").appendChild(newButton);
+        }
+
+        function resetLight() {
+            document.getElementById("light").innerHTML="";
+            document.getElementById("lightDescription").innerHTML = "";
+            document.getElementById("lightId").innerHTML = "";
+            document.getElementById("lightLevel").innerHTML = "";
+            document.getElementById("lightStatus").innerHTML = "";
+            document.getElementById("lightRoomId").innerHTML = "";
+            document.getElementById("lighton").innerHTML="";
+        }
+
+        function createLightButton(id, level, status, roomId) {
+            let newButton = document.createElement("input");
+            newButton.type="button";
+            newButton.value=id;
+            newButton.addEventListener("click", function () {
+                document.getElementById("lighton").innerHTML="";
+                document.getElementById("lightDescription").innerHTML = "Light Description";
+                document.getElementById("lightId").innerHTML = "ID: " + id;
+                document.getElementById("lightLevel").innerHTML = "Level: " + level;
+                document.getElementById("lightStatus").innerHTML = "Status: " + status;
+                document.getElementById("lightRoomId").innerHTML = "Room Id: " + roomId;
+                createSwitchLightButton(id);
+            });
+            document.getElementById("light").appendChild(newButton);
+        }
+
+        function createSwitchLightButton(id) {
+            let newButton = document.createElement("input");
+            newButton.type="button";
+            newButton.value="ON/OFF";
+            newButton.addEventListener("click",function () {
+                let urllightget = requestURLLight + "/" + id;
+                let urllightput = urllightget + "/switch";
+                ajaxPut(urllightput);
+                ajaxGetNoLoad(urllightget, function (reponse) {
+                    /*let light = JSON.parse(reponse);
+                    console.log(light);
+                    document.getElementById("lightStatus").innerText = "Status :" + light.status;*/
+                    console.log(reponse);
+                });
+            });
+            document.getElementById("lighton").appendChild(newButton);
+        }
+
+        function ajaxGet(url, callback) {
+             let request = new XMLHttpRequest();
+             request.open('GET', url);
+             request.addEventListener("load",function () {
+                 if (request.status >=200 && request.status< 400) {
+                     callback(request.responseText);
+                 }
+                 else {
+                     console.error(request.status + " " + request.statusText);
+                 }
+             });
+
+             request.addEventListener("error", function() {
+                 console.error("Erreur réseau");
+             });
+
+             request.send(null);
+        }
+
+
+        function ajaxGetNoLoad(url, callback) {
+            let request = new XMLHttpRequest();
+            request.open('GET', url);
+            console.log(request.responseText);
+            callback(request.responseText);
+            request.send(null);
+            console.log(request.responseText);
+        }
+
+        function ajaxPut(urlput) {
+            let request = new XMLHttpRequest();
+            request.open('PUT', urlput);
+            request.addEventListener("error", function() {
+                console.error("Erreur réseau");
+            });
+            request.send(null);
+        }
+
+        ajaxGet(requestURLBuilding, function (reponse) {
+            let buildings = JSON.parse(reponse);
+
+            buildings.forEach(function (building) {
+                createBuildingButton(building.id,building.name);
+            });
+        });
+
+        function getRoomFromBuilding(url,id) {
+            ajaxGet(url, function (reponse) {
+                let rooms = JSON.parse(reponse);
+                rooms.forEach(function (room) {
+                    if (id == room.buildingid) {
+                        createRoomButton(room.id,room.floor,room.name,room.status,room.buildingid);
+                    }
+                });
+            });
+        }
+
+        function getLightByRoom(url, id) {
+            ajaxGet(url, function (reponse) {
+
+                let lights = JSON.parse(reponse);
+
+                lights.forEach(function (light) {
+                    if (id == light.roomId) {
+                        createLightButton(light.id, light.level, light.status, light.roomId);
+                    }
+                });
+            });
+        }
+
     </script>
 
 </body>

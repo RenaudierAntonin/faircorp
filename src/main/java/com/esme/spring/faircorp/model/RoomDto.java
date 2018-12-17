@@ -1,19 +1,21 @@
 package com.esme.spring.faircorp.model;
 
+import java.util.List;
+
 public class RoomDto {
 
     private final Long id;
     private final String name;
     private final Integer floor;
     private final Status status;
-    private final Long buildingid;
+    private final List<Light> lights;
 
-    public RoomDto(Long id, String name, Integer floor, Status status, Long buildingid) {
+    public RoomDto(Long id, String name, Integer floor, Status status, List<Light> lights) {
         this.id = id;
         this.name = name;
         this.floor = floor;
         this.status = status;
-        this.buildingid = buildingid;
+        this.lights = lights;
     }
 
     public RoomDto(Room room) {
@@ -21,7 +23,7 @@ public class RoomDto {
         this.name=room.getName();
         this.floor=room.getFloor();
         this.status=room.getStatus();
-        this.buildingid=room.getBuilding().getId();
+        this.lights=room.getLights();
     }
 
     public Long getId() {
@@ -40,7 +42,7 @@ public class RoomDto {
         return status;
     }
 
-    public Long getBuildingid() {
-        return buildingid;
+    public List<Light> getLights() {
+        return lights;
     }
 }

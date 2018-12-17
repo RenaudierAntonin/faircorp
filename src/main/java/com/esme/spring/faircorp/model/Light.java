@@ -13,9 +13,6 @@ public class Light {
     @Column(nullable=false)
     private Integer level;
 
-    @ManyToOne
-    private Room room;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -23,10 +20,9 @@ public class Light {
     public Light() {
     }
 
-    public Light(Integer level, Status status, Room room) {
+    public Light(Integer level, Status status) {
         this.level = level;
         this.status = status;
-        this.room = room;
     }
 
     public Long getId() {
@@ -53,5 +49,4 @@ public class Light {
         this.status = status;
     }
 
-    public Room getRoom() { return room;}
 }
